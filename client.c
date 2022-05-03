@@ -24,44 +24,46 @@ int main(int argc, char** argv)
 
   if (argc != 3) usage();
 
-  memset(buf,0,sizeof(buf));
+  memset(buf,0,sizeof(buf)); // Initialize buffer
 
-  sockfd = socket(AF_INET,SOCK_STREAM,0);
+  sockfd = socket(AF_INET,SOCK_STREAM,0); // Initialize client socket
   assert(sockfd != -1);
 
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = inet_addr(argv[1]);
-  addr.sin_port = htons(atoi(argv[2]));
+  addr.sin_family = AF_INET; // Initialize sockaddr_in struct
+  addr.sin_addr.s_addr = inet_addr(argv[1]); // Initialize sockaddr_in with argv IP
+  addr.sin_port = htons(atoi(argv[2])); // Initialize sockaddr_in with argv port
 
-  res = connect(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+  res = connect(sockfd, (struct sockaddr *) &addr, sizeof(addr)); // connect socket
   assert(res!=-1);
 
   printf("Connected\n");
   
   while(1){
-    res = read(0,buf,MAX_BUF_LEN);
-    assert(res!=-1);    
-    res = send(sockfd, buf, res, 0);
+    res = read(0,buf,MAX_BUF_LEN); // read user input 
     assert(res!=-1);
-    buf[res--] = 0;
-    if(!strncmp(buf,"QUIT",4) && res==4){
+    res = send(sockfd, buf, res, 0); // send to server socket
+    assert(res!=-1);
+    buf[--res] = 0; // change user input \n to null
+    if(!strncmp(buf,"QUIT",4) && res==4){ // When user input exactly equals "QUIT"
       printf("Disconnected\n");
       break;
     }
+    memset(buf,0,sizeof(buf)); // Initialize buffer
 
-    res = recv(sockfd, buf, sizeof(buf), 0);
+
+
+    res = recv(sockfd, buf, sizeof(buf), 0);  // receive server socket input
     assert(res != -1);
 
-    buf[res--] = 0;
+    buf[--res] = 0;  // change user input \n to null
     printf("%s\n",buf);
 
-    if(!strncmp(buf,"QUIT",4) && res==4){
+    if(!strncmp(buf,"QUIT",4) && res==4){ // When user input exactly equals "QUIT"
       printf("Disconnected\n");
       break;
     }
 
-    memset(buf,0,sizeof(buf));
-
+    memset(buf,0,sizeof(buf)); // Initialize buffer
   }
-  close(sockfd);
+  close(sockfd); // When QUIT, close fd
 }
