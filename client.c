@@ -51,9 +51,9 @@ int main(int argc, char** argv)
 
     res = recv(sockfd, buf, sizeof(buf), 0);
     assert(res != -1);
-    
-    printf("%s\n",buf);
+
     buf[res--] = 0;
+    printf("%s\n",buf);
 
     if(!strncmp(buf,"QUIT",4) && res==4){
       printf("Disconnected\n");
