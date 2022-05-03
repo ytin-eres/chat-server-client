@@ -41,7 +41,7 @@ int main(int argc, char** argv)
   while(1){
     res = read(0,buf,MAX_BUF_LEN);
     assert(res!=-1);    
-    res = send(sockfd, buf, MAX_BUF_LEN, 0);
+    res = send(sockfd, buf, res, 0);
     assert(res!=-1);
     buf[res--] = 0;
     if(!strncmp(buf,"QUIT",4) && res==4){
